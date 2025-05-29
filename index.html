@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Bulk Player</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input {
+      margin: 5px 0;
+      padding: 8px;
+      width: 400px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    #video-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    iframe {
+      width: 200px;
+      height: 113px;
+      border: none;
+    }
+  </style>
+  <script>
+    function extractVideoId(url) {
+      const matchNormal = url.match(/v=([a-zA-Z0-9_-]{11})/);
+      const matchShorts = url.match(/shorts\/([a-zA-Z0-9_-]{11})/);
+      const matchShort = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+
+      if (matchNormal) return matchNormal[1];
+      if (matchShorts) return matchShorts[1];
+      if (matchShort) return matchShort[1];
+      return null;
+    }
+
+    function playMultipleVideos() {
+      const url = document.getElementById('yt-url').value.trim();
+      const count = parseInt(document.getElementById('view-count').value.trim());
+      const videoId = extractVideoId(url);
+      const container = document.getElementById('video-container');
+      container.innerHTML = '';
+
+      if (!videoId) {
+        alert("Invalid YouTube URL");
+        return;
+      }
+
+      if (isNaN(count) || count < 1 || count > 10001) {
+        alert("Please enter a number between 1 and 10001.");
+        return;
+      }
+
+      const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0`;
+
+      for (let i = 0; i < count; i++) {
+        const iframe = document.createElement('iframe');
+        iframe.src = embedUrl;
+        container.appendChild(iframe);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>YouTube Video/Shorts Multi-Player</h2>
+  <input type="text" id="yt-url" placeholder="Paste YouTube URL here"><br>
+  <input type="number" id="view-count" placeholder="Enter number of plays (max 10001)" max="10001"><br>
+  <button onclick="playMultipleVideos()">Play Video Multiple Times</button>
+
+  <div id="video-container"></div>
+</body>
+</html>
